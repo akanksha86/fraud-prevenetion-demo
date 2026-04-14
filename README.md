@@ -2,13 +2,13 @@
 
 This repository contains the code and configuration for a Fraud Prevention Demo on Google Cloud Platform (GCP), focusing on CPaaS fraud scenarios like SMS Pumping and Artificially Inflated Traffic (AIT). The demo showcases how to use synthetic data generation, advanced analytics with BigQuery (including Continuous Queries and Object Tables), and generative AI with Vertex AI to detect and prevent fraudulent transactions.
 
-## Current Status: Phase 2 In Progress
+## Current Status: Phase 3 Planning
 
-We have completed the data generation and infrastructure setup (Phase 1). We are currently working on **Phase 2: Real-Time Detection: Continuous Queries**.
+We have completed the data generation and infrastructure setup (Phase 1) and real-time detection with notebook simulation (Phase 2). We are now planning **Phase 3: Agentic Architecture**.
 
 *   [x] Phase 1: Multimodal Data Layer (Data Generation & Upload)
-*   [/] Phase 2: Real-Time Detection (Continuous Queries Setup & Implementation)
-*   [ ] Phase 3: Agentic Architecture
+*   [x] Phase 2: Real-Time Detection (Continuous Queries & Notebook Simulation)
+*   [/] Phase 3: Agentic Architecture
 
 ## Project Structure
 
@@ -103,6 +103,16 @@ Check if data is arriving in BigQuery by running:
 ```bash
 bq query --use_legacy_sql=false 'SELECT * FROM `fraud-prevention-demo.fraud_data.streaming_transactions` ORDER BY timestamp DESC LIMIT 10'
 ```
+
+## How to Run the Demo Notebook
+
+We have created a Jupyter notebook to demonstrate real-time fraud detection and multimodal analysis.
+
+1.  Open `bq_capabilities/continuous_queries.ipynb` in Colab Enterprise or your Jupyter environment.
+2.  Follow the instructions in the notebook to:
+    *   Monitor the stream and detect fraud spikes in real-time.
+    *   Set up Object Tables and Gemini Remote Models.
+    *   Run multimodal analysis on flagged transactions.
 
 ## License
 
