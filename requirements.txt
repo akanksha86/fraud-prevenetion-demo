@@ -1,1 +1,6 @@
 faker
+google-adk
+gradio
+google-cloud-bigquery
+google-cloud-aiplatform
+python-dotenv
