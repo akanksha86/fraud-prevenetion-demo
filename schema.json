@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "Avro",
+  "fields": [
+    {"name": "timestamp", "type": "string"},
+    {"name": "sender_id", "type": "string"},
+    {"name": "destination", "type": "string"},
+    {"name": "cost", "type": "float"},
+    {"name": "ip_address", "type": "string"},
+    {"name": "unstructured_ref", "type": ["null", "string"], "default": null}
+  ]
+}

@@ -69,13 +69,14 @@ def generate_transaction():
             is_fraud_burst = False
             print("\n[SYSTEM] Ending fraud burst.")
             
+        ref = random.choice(asset_paths)
         return {
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'sender_id': 'SinchMsg' + str(random.randint(100, 999)),
             'destination': fraud_destination_prefix,
             'cost': round(random.uniform(0.10, 0.50), 4),
             'ip_address': fraud_ip,
-            'unstructured_ref': random.choice(asset_paths) # High chance of linking to asset in fraud
+            'unstructured_ref': {"string": ref}
         }
     else:
         destination = random.choice(fixed_normal_destinations)
@@ -83,13 +84,14 @@ def generate_transaction():
         if random.random() < 0.02:
             destination = random.choice(fixed_high_cost_destinations)
             
+        ref = random.choice(asset_paths + [None] * 20)
         return {
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'sender_id': 'SinchMsg' + str(random.randint(100, 999)),
             'destination': destination,
             'cost': round(random.uniform(0.01, 0.05), 4),
             'ip_address': fake.ipv4(),
-            'unstructured_ref': random.choice(asset_paths + [None] * 20) # Low chance in normal traffic
+            'unstructured_ref': {"string": ref} if ref else None
         }
 
 def stream_data():
