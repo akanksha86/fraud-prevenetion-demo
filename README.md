@@ -109,6 +109,42 @@ Check if data is arriving in BigQuery by running:
 bq query --use_legacy_sql=false 'SELECT * FROM `fraud-prevention-demo.fraud_data.streaming_transactions` ORDER BY timestamp DESC LIMIT 10'
 ```
 
+## How to Run the Streaming Simulation (Direct BigQuery Subscription - Recommended)
+
+This method uses a BigQuery Subscription in Pub/Sub to stream data directly into BigQuery, removing the need for the Python bridge script.
+
+### Step 1: Create Pub/Sub Topic with Schema
+Use the provided `schema.json` to create the topic with a schema.
+
+```bash
+gcloud pubsub schemas create fraud-schema --type=avro --definition-file=schema.json
+gcloud pubsub topics create fraud-transactions-topic --schema=fraud-schema --message-encoding=json
+```
+
+### Step 2: Create BigQuery Table
+Create the `direct_stream_transactions` table.
+
+```bash
+bq mk --table fraud-prevention-demo:fraud_data.direct_stream_transactions timestamp:TIMESTAMP,sender_id:STRING,destination:STRING,cost:FLOAT,ip_address:STRING,unstructured_ref:STRING
+```
+
+### Step 3: Create BigQuery Subscription
+Create the subscription that maps fields directly.
+
+```bash
+gcloud pubsub subscriptions create direct-bq-sub \
+    --topic=fraud-transactions-topic \
+    --bigquery-table=fraud-prevention-demo:fraud_data.direct_stream_transactions \
+    --use-topic-schema
+```
+
+### Step 4: Run the Streamer
+Only run the streamer script.
+
+```bash
+python3 data_generator/stream_data.py
+```
+
 ## How to Run Phase 3: Agentic Architecture
 
 Follow these steps to run the multi-agent ADK server and the Gradio UI.
