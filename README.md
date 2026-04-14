@@ -45,8 +45,12 @@ This phase introduces a multi-agent system to handle alerts and investigate pote
     *   **Profiler**: Queries BigQuery for customer history and automatically finds the last known IP and associated asset.
     *   **Inspector**: Queries BigQuery for IP reputation.
     *   **Analyst**: Uses Gemini 2.5 Pro to analyze message text and GCS assets (images/audio) for fraud patterns.
-    *   **Decision**: Makes the final ALLOW/QUARANTINE decision based on inputs from previous agents.
+    *   **Decision**: Makes the final decision based on inputs from previous agents.
 *   **UI**: A Gradio interface allows human-in-the-loop interaction to trigger investigations and view agent reasoning.
+
+#### Possible Decisions:
+*   **ALLOW**: Traffic is deemed legitimate based on historical patterns and low content risk score.
+*   **QUARANTINE**: Traffic is flagged as potentially fraudulent (e.g., high risk score from Gemini or suspicious IP history) and should be blocked or reviewed.
 
 ### Phase 4: The End-to-End Demo Flow
 
