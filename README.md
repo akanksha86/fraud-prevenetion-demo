@@ -2,13 +2,13 @@
 
 This repository contains the code and configuration for a Fraud Prevention Demo on Google Cloud Platform (GCP), focusing on CPaaS fraud scenarios like SMS Pumping and Artificially Inflated Traffic (AIT). The demo showcases how to use synthetic data generation, advanced analytics with BigQuery (including Continuous Queries and Object Tables), and generative AI with Vertex AI to detect and prevent fraudulent transactions.
 
-## Current Status: Phase 3 Planning
+## Current Status: Phase 3 Completed
 
-We have completed the data generation and infrastructure setup (Phase 1) and real-time detection with notebook simulation (Phase 2). We are now planning **Phase 3: Agentic Architecture**.
+We have completed the data generation and infrastructure setup (Phase 1), real-time detection with notebook simulation (Phase 2), and the **Agentic Architecture** with ADK and UI (Phase 3).
 
 *   [x] Phase 1: Multimodal Data Layer (Data Generation & Upload)
 *   [x] Phase 2: Real-Time Detection (Continuous Queries & Notebook Simulation)
-*   [/] Phase 3: Agentic Architecture
+*   [x] Phase 3: Agentic Architecture
 
 ## Project Structure
 
@@ -37,15 +37,16 @@ This phase involves developing the core logic for processing transactions and de
 
 ### Phase 3: The Agentic Architecture: "The Investigator"
 
-This phase introduces AI agents to handle alerts and investigate potential fraud.
+This phase introduces a multi-agent system to handle alerts and investigate potential fraud autonomously.
 
-*   **Trigger**: A Continuous Query detects an anomaly and calls a BigQuery Remote Function.
-*   **The Agent's Goal**: "Determine if this traffic is legitimate business growth or an AIT attack, and take action."
-*   **Autonomous Tools**: The Agent is granted "Tools" (functions) it can call:
-    *   `get_customer_history(customer_id)`: Queries historical BQ data.
-    *   `analyze_message_content(sample_text)`: Uses Gemini to check if the SMS body looks like a template-based bot attack.
-    *   `check_ip_reputation(ip_address)`: Hits an external API to see if the IP is a known proxy.
-*   **Decision & Action**: The Agent can autonomously call an API to throttle the traffic or quarantine the messages.
+*   **Framework**: Built using Google Agent Development Kit (ADK).
+*   **Orchestration**: Uses a `SequentialAgent` pipeline.
+*   **Sub-Agents**:
+    *   **Profiler**: Queries BigQuery for customer history and automatically finds the last known IP and associated asset.
+    *   **Inspector**: Queries BigQuery for IP reputation.
+    *   **Analyst**: Uses Gemini 2.5 Pro to analyze message text and GCS assets (images/audio) for fraud patterns.
+    *   **Decision**: Makes the final ALLOW/QUARANTINE decision based on inputs from previous agents.
+*   **UI**: A Gradio interface allows human-in-the-loop interaction to trigger investigations and view agent reasoning.
 
 ### Phase 4: The End-to-End Demo Flow
 
@@ -104,6 +105,41 @@ Check if data is arriving in BigQuery by running:
 bq query --use_legacy_sql=false 'SELECT * FROM `fraud-prevention-demo.fraud_data.streaming_transactions` ORDER BY timestamp DESC LIMIT 10'
 ```
 
+## How to Run Phase 3: Agentic Architecture
+
+Follow these steps to run the multi-agent ADK server and the Gradio UI.
+
+### Step 1: Activate Virtual Environment
+Ensure you have activated the virtual environment in both terminals.
+
+```bash
+source .venv/bin/activate
+```
+
+### Step 2: Authenticate with Google Cloud
+Ensure you are authenticated to access BigQuery and Vertex AI.
+
+```bash
+gcloud auth application-default login
+```
+
+### Step 3: Run the ADK Backend Server (Terminal 1)
+Start the API server on port 8001.
+
+```bash
+adk api_server --port 8001 agents
+```
+
+### Step 4: Run the Gradio UI (Terminal 2)
+Start the frontend interface.
+
+```bash
+python3 ui/app.py
+```
+
+### Step 5: Verify the Flow
+Open the Gradio URL in your browser (usually `http://127.0.0.1:7860`), enter a destination number (e.g., `263222222222`), and click Submit to see the automated investigation!
+
 ## How to Run the Demo Notebook
 
 We have created a Jupyter notebook to demonstrate real-time fraud detection and multimodal analysis.
@@ -117,4 +153,3 @@ We have created a Jupyter notebook to demonstrate real-time fraud detection and 
 ## License
 
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
-
