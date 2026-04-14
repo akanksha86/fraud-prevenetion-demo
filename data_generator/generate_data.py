@@ -19,8 +19,20 @@ def generate_data(num_records=1000):
     data = []
     
     # Configuration
-    high_cost_destinations = ['+234', '+252', '+263'] # Nigeria, Somalia, Zimbabwe
-    normal_destinations = ['+1', '+44', '+33', '+49', '+81', '+61']
+    # Fixed pools of destinations to ensure matches between historical and streaming data
+    fixed_normal_destinations = [
+        '+1111111111', '+1222222222', '+1333333333', '+1444444444',
+        '+44111111111', '+44222222222', '+44333333333',
+        '+33111111111', '+33222222222',
+        '+49111111111', '+49222222222',
+        '+81111111111', '+81222222222',
+        '+61111111111', '+61222222222'
+    ]
+    fixed_high_cost_destinations = [
+        '+234111111111', '+234222222222',
+        '+252111111111', '+252222222222',
+        '+263111111111', '+263222222222'
+    ]
     
     asset_paths = [
         "gs://fraud-prevention-demo-assets/phishing_bank.png",
@@ -34,11 +46,11 @@ def generate_data(num_records=1000):
     
     for _ in range(normal_records):
         timestamp = datetime.now(timezone.utc) - timedelta(days=random.randint(1, 30))
-        destination = random.choice(normal_destinations) + str(random.randint(100000000, 999999999))
+        destination = random.choice(fixed_normal_destinations)
         
         # 5% chance of being a high cost destination in normal traffic
         if random.random() < 0.05:
-            destination = random.choice(high_cost_destinations) + str(random.randint(100000000, 999999999))
+            destination = random.choice(fixed_high_cost_destinations)
             
         data.append({
             'timestamp': timestamp.isoformat(),
@@ -52,13 +64,13 @@ def generate_data(num_records=1000):
     # Fraud Scenario 1: SMS Pumping / AIT
     fraud_start_time = datetime.now(timezone.utc) - timedelta(days=random.randint(1, 5))
     fraud_ip = fake.ipv4()
-    fraud_destination_prefix = random.choice(high_cost_destinations)
+    fraud_destination = random.choice(fixed_high_cost_destinations)
     
-    print(f"Generating fraud scenario: Spike to {fraud_destination_prefix} from {fraud_ip}")
+    print(f"Generating fraud scenario: Spike to {fraud_destination} from {fraud_ip}")
     
     for i in range(100):
         timestamp = fraud_start_time + timedelta(seconds=random.randint(1, 60))
-        destination = fraud_destination_prefix + str(random.randint(100000000, 999999999))
+        destination = fraud_destination
         
         ref = None
         if random.random() < 0.3:

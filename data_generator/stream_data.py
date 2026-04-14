@@ -33,8 +33,20 @@ def generate_transaction():
     """Generates a single simulated transaction (SMS log)."""
     global is_fraud_burst, fraud_burst_count, fraud_ip, fraud_destination_prefix
     
-    high_cost_destinations = ['+234', '+252', '+263'] # Nigeria, Somalia, Zimbabwe
-    normal_destinations = ['+1', '+44', '+33', '+49', '+81', '+61']
+    # Fixed pools of destinations to ensure matches between historical and streaming data
+    fixed_normal_destinations = [
+        '+1111111111', '+1222222222', '+1333333333', '+1444444444',
+        '+44111111111', '+44222222222', '+44333333333',
+        '+33111111111', '+33222222222',
+        '+49111111111', '+49222222222',
+        '+81111111111', '+81222222222',
+        '+61111111111', '+61222222222'
+    ]
+    fixed_high_cost_destinations = [
+        '+234111111111', '+234222222222',
+        '+252111111111', '+252222222222',
+        '+263111111111', '+263222222222'
+    ]
     
     asset_paths = [
         "gs://fraud-prevention-demo-assets/phishing_bank.png",
@@ -48,7 +60,7 @@ def generate_transaction():
         is_fraud_burst = True
         fraud_burst_count = random.randint(20, 50) # Number of messages in the burst
         fraud_ip = fake.ipv4()
-        fraud_destination_prefix = random.choice(high_cost_destinations)
+        fraud_destination_prefix = random.choice(fixed_high_cost_destinations)
         print(f"\n[SYSTEM] Starting fraud burst to {fraud_destination_prefix} from {fraud_ip}...")
         
     if is_fraud_burst:
@@ -60,16 +72,16 @@ def generate_transaction():
         return {
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'sender_id': 'SinchMsg' + str(random.randint(100, 999)),
-            'destination': fraud_destination_prefix + str(random.randint(100000000, 999999999)),
+            'destination': fraud_destination_prefix,
             'cost': round(random.uniform(0.10, 0.50), 4),
             'ip_address': fraud_ip,
             'unstructured_ref': random.choice(asset_paths) # High chance of linking to asset in fraud
         }
     else:
-        destination = random.choice(normal_destinations) + str(random.randint(100000000, 999999999))
+        destination = random.choice(fixed_normal_destinations)
         # 2% chance of normal traffic hitting high cost destination
         if random.random() < 0.02:
-            destination = random.choice(high_cost_destinations) + str(random.randint(100000000, 999999999))
+            destination = random.choice(fixed_high_cost_destinations)
             
         return {
             'timestamp': datetime.now(timezone.utc).isoformat(),
@@ -92,9 +104,9 @@ def stream_data():
             future = publisher.publish(topic_path, message_data)
             
             if is_fraud_burst:
-                print(f"🔥 Fraud Alert | Dest: {transaction['destination']} | IP: {transaction['ip_address']}")
+                print(f"🔥 Fraud Alert | Dest: {transaction['destination']} | IP: {transaction['ip_address']} | Cost: {transaction['cost']}")
             else:
-                print(f"Published message ID: {future.result()} | Dest: {transaction['destination']}")
+                print(f"Published message ID: {future.result()} | Dest: {transaction['destination']} | Cost: {transaction['cost']}")
             
             # Wait a bit before the next transaction
             # Faster during fraud burst
