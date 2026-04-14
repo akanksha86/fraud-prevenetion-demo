@@ -30,3 +30,4 @@ tmp_gcloud_config/
 # Local SDK
 google-cloud-cli-linux-x86_64.tar.gz
 google-cloud-sdk/
+restart_instructions.md
