@@ -10,6 +10,39 @@ We have completed the data generation and infrastructure setup (Phase 1), real-t
 *   [x] Phase 2: Real-Time Detection (Continuous Queries & Notebook Simulation)
 *   [x] Phase 3: Agentic Architecture
 
+## Architecture Diagram
+
+```mermaid
+graph TD
+    subgraph Data Generation
+        SD[stream_data.py] -->|Publishes| PS[Pub/Sub Topic]
+    end
+
+    subgraph Data Ingestion & Storage
+        PS -->|Direct Subscription| BQ_Stream[(BigQuery: direct_stream_transactions)]
+        GCS[(Cloud Storage: Assets)] -.->|Referenced in| BQ_Stream
+    end
+
+    subgraph Real-Time Detection
+        NB[Jupyter Notebook / Continuous Queries] -->|Monitors| BQ_Stream
+    end
+
+    subgraph Agentic Architecture
+        UI[Gradio UI] -->|Triggers| ADK[ADK API Server]
+        ADK --> Profiler[Profiler Agent]
+        ADK --> Inspector[Inspector Agent]
+        ADK --> Analyst[Analyst Agent]
+        ADK --> Decision[Decision Agent]
+        
+        Profiler -->|Queries| BQ_Hist[(BigQuery: historical_transactions)]
+        Inspector -->|Queries| BQ_Hist
+        Analyst -->|Calls| Gemini[Gemini 2.5 Pro]
+        Gemini -->|Reads| GCS
+        
+        Decision -->|Output| UI
+    end
+```
+
 ## Project Structure
 
 The project is organized into the following phases:
