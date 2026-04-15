@@ -64,54 +64,7 @@ This phase introduces a multi-agent system to handle alerts and investigate pote
 
 ## How to Run the Streaming Simulation
 
-Follow these steps to run the real-time data generation and ingestion pipeline.
-
-### Step 1: Activate Virtual Environment and Install Dependencies
-Ensure you have activated the virtual environment and installed the required Python packages.
-
-```bash
-source .venv/bin/activate
-python3 -m pip install google-cloud-pubsub google-cloud-bigquery faker
-```
-
-### Step 2: Ensure Pub/Sub Resources Exist
-Create the Pub/Sub topic and subscription if they do not already exist.
-
-```bash
-gcloud pubsub topics create fraud-transactions-topic --project=fraud-prevention-demo
-gcloud pubsub subscriptions create fraud-transactions-sub --topic=fraud-transactions-topic --project=fraud-prevention-demo
-```
-
-### Step 3: Ensure BigQuery Table Exists
-Create the `streaming_transactions` table with the correct schema.
-
-```bash
-bq mk --table fraud-prevention-demo:fraud_data.streaming_transactions timestamp:TIMESTAMP,sender_id:STRING,destination:STRING,cost:FLOAT,ip_address:STRING,unstructured_ref:STRING
-```
-
-### Step 4: Run the Scripts (Use Separate Terminals)
-Run the streamer to generate data and the bridge to load it into BigQuery.
-
-**Terminal 1:**
-```bash
-python3 data_generator/stream_data.py
-```
-
-**Terminal 2:**
-```bash
-python3 data_generator/pubsub_to_bq.py
-```
-
-### Step 5: Verify Data in BigQuery
-Check if data is arriving in BigQuery by running:
-
-```bash
-bq query --use_legacy_sql=false 'SELECT * FROM `fraud-prevention-demo.fraud_data.streaming_transactions` ORDER BY timestamp DESC LIMIT 10'
-```
-
-## How to Run the Streaming Simulation (Direct BigQuery Subscription - Recommended)
-
-This method uses a BigQuery Subscription in Pub/Sub to stream data directly into BigQuery, removing the need for the Python bridge script.
+This method uses a BigQuery Subscription in Pub/Sub to stream data directly into BigQuery.
 
 ### Step 1: Create Pub/Sub Topic with Schema
 Use the provided `schema.json` to create the topic with a schema.
