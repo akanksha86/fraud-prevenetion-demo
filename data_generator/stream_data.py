@@ -1,7 +1,7 @@
 """
 Simulated Stream Generator for Fraud Prevention Demo (SMS Pumping & AIT).
 
-This script generates simulated real-time SMS traffic data for a CPaaS company (Sinch)
+This script generates simulated real-time SMS traffic data for a CPaaS company (Cymbal Telco)
 and publishes it to a Pub/Sub topic. It simulates both normal traffic and
 occasional fraud spikes (AIT).
 """
@@ -72,7 +72,7 @@ def generate_transaction():
         ref = random.choice(asset_paths)
         return {
             'timestamp': datetime.now(timezone.utc).isoformat(),
-            'sender_id': 'SinchMsg' + str(random.randint(100, 999)),
+            'sender_id': 'CymbalMsg' + str(random.randint(100, 999)),
             'destination': fraud_destination_prefix,
             'cost': round(random.uniform(0.10, 0.50), 4),
             'ip_address': fraud_ip,
@@ -87,7 +87,7 @@ def generate_transaction():
         ref = random.choice(asset_paths + [None] * 20)
         return {
             'timestamp': datetime.now(timezone.utc).isoformat(),
-            'sender_id': 'SinchMsg' + str(random.randint(100, 999)),
+            'sender_id': 'CymbalMsg' + str(random.randint(100, 999)),
             'destination': destination,
             'cost': round(random.uniform(0.01, 0.05), 4),
             'ip_address': fake.ipv4(),

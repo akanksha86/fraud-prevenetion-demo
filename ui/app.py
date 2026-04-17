@@ -53,7 +53,7 @@ def investigate(phone_number, sample_text, ip_address):
     except Exception as e:
         return f"Error: {e}"
 
-# Custom CSS for Sinch Branding
+# Custom CSS for Cymbal Telco Branding
 custom_css = """
 body {
     background-color: #F7F9FA;
@@ -64,28 +64,28 @@ body {
     margin: 0 auto;
     padding: 20px;
 }
-.sinch-header {
+.cymbal-header {
     background-color: #645DC2; /* Violet */
     color: white;
     padding: 20px;
     border-radius: 10px 10px 0 0;
     text-align: center;
 }
-.sinch-header h1 {
+.cymbal-header h1 {
     margin: 0;
     font-size: 24px;
 }
-.sinch-header p {
+.cymbal-header p {
     margin: 5px 0 0 0;
     opacity: 0.8;
 }
-.sinch-button {
-    background-color: #D15CB4 !important; /* Sinch Pink */
+.cymbal-button {
+    background-color: #D15CB4 !important; /* Cymbal Accent */
     color: white !important;
     border: none !important;
     font-weight: bold !important;
 }
-.sinch-button:hover {
+.cymbal-button:hover {
     background-color: #B54A9A !important;
 }
 .output-box {
@@ -99,8 +99,8 @@ body {
 with gr.Blocks() as demo:
     with gr.Column(elem_classes="container"):
         # Replaced Div with Column and applied class
-        with gr.Column(elem_classes="sinch-header"):
-            gr.Markdown("# Sinch Real-Time Fraud Monitoring")
+        with gr.Column(elem_classes="cymbal-header"):
+            gr.Markdown("# Cymbal Telco Real-Time Fraud Monitoring")
             gr.Markdown("Powered by ADK Multi-Agent AI")
             
         with gr.Row(elem_classes="output-box"):
@@ -108,7 +108,7 @@ with gr.Blocks() as demo:
                 phone_input = gr.Textbox(label="Phone Number", placeholder="+263222222222")
                 text_input = gr.Textbox(label="Sample Text", placeholder="Enter SMS text here...")
                 ip_input = gr.Textbox(label="IP Address", placeholder="187.37.63.58")
-                submit_btn = gr.Button("Run Investigation", elem_classes="sinch-button")
+                submit_btn = gr.Button("Run Investigation", elem_classes="cymbal-button")
                 
             with gr.Column(scale=2):
                 report_output = gr.Textbox(label="Investigation Report", lines=20)

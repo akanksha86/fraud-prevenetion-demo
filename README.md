@@ -2,13 +2,6 @@
 
 This repository contains the code and configuration for a Fraud Prevention Demo on Google Cloud Platform (GCP), focusing on CPaaS fraud scenarios like SMS Pumping and Artificially Inflated Traffic (AIT). The demo showcases how to use synthetic data generation, advanced analytics with BigQuery (including Continuous Queries and Object Tables), and generative AI with Vertex AI to detect and prevent fraudulent transactions.
 
-## Current Status: Phase 3 Completed
-
-We have completed the data generation and infrastructure setup (Phase 1), real-time detection with notebook simulation (Phase 2), and the **Agentic Architecture** with ADK and UI (Phase 3).
-
-*   [x] Phase 1: Multimodal Data Layer (Data Generation & Upload)
-*   [x] Phase 2: Real-Time Detection (Continuous Queries & Notebook Simulation)
-*   [x] Phase 3: Agentic Architecture
 
 ## Architecture Diagram
 
@@ -85,15 +78,6 @@ This phase introduces a multi-agent system to handle alerts and investigate pote
 *   **ALLOW**: Traffic is deemed legitimate based on historical patterns and low content risk score.
 *   **QUARANTINE**: Traffic is flagged as potentially fraudulent (e.g., high risk score from Gemini or suspicious IP history) and should be blocked or reviewed.
 
-### Phase 4: The End-to-End Demo Flow
-
-| Step | Component | Action |
-| :--- | :--- | :--- |
-| Ingest | Pub/Sub | Streams live SMS traffic and links to "unstructured" phishing screenshots. |
-| Store | BigQuery | Real-time table receives the stream; Object Table manages the screenshots. |
-| Detect | Continuous Queries | Constant SQL monitoring: `SELECT * FROM stream WHERE rate > threshold`. |
-| Analyze | BQ ML + Gemini | Extracts features from message text and screenshots to confirm "phishing" intent. |
-| Act | AI Agent | Receives the alert, "reasons" through the logs, and triggers a mitigation script. |
 
 ## How to Run the Streaming Simulation
 
@@ -111,16 +95,16 @@ gcloud pubsub topics create fraud-transactions-topic --schema=fraud-schema --mes
 Create the `direct_stream_transactions` table.
 
 ```bash
-bq mk --table fraud-prevention-demo:fraud_data.direct_stream_transactions timestamp:TIMESTAMP,sender_id:STRING,destination:STRING,cost:FLOAT,ip_address:STRING,unstructured_ref:STRING
+bq mk --table fraud-prevention-demo:fraud_data_new.direct_stream_transactions timestamp:TIMESTAMP,sender_id:STRING,destination:STRING,cost:FLOAT,ip_address:STRING,unstructured_ref:STRING
 ```
 
 ### Step 3: Create BigQuery Subscription
 Create the subscription that maps fields directly.
 
 ```bash
-gcloud pubsub subscriptions create direct-bq-sub \
+gcloud pubsub subscriptions create direct-bq-sub-new \
     --topic=fraud-transactions-topic \
-    --bigquery-table=fraud-prevention-demo:fraud_data.direct_stream_transactions \
+    --bigquery-table=fraud-prevention-demo:fraud_data_new.direct_stream_transactions \
     --use-topic-schema
 ```
 
