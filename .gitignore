@@ -22,6 +22,7 @@ Thumbs.db
 
 # GCP
 .gcloud/
+.gcloud_config/
 
 # Context
 context.md
@@ -31,3 +32,6 @@ tmp_gcloud_config/
 google-cloud-cli-linux-x86_64.tar.gz
 google-cloud-sdk/
 restart_instructions.md
+
+# Session Database
+agents/fraud_pipeline/.adk/session.db

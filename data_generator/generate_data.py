@@ -1,7 +1,7 @@
 """
 Synthetic Data Generator for Fraud Prevention Demo (SMS Pumping & AIT).
 
-This script generates realistic SMS traffic data for a CPaaS company (Sinch),
+This script generates realistic SMS traffic data for a CPaaS company (Cymbal Telco),
 including normal traffic and specific fraud scenarios (SMS Pumping/AIT),
 saves it to a CSV file, and loads the CSV into BigQuery.
 """
@@ -54,7 +54,7 @@ def generate_data(num_records=1000):
             
         data.append({
             'timestamp': timestamp.isoformat(),
-            'sender_id': 'SinchMsg' + str(random.randint(100, 999)),
+            'sender_id': 'CymbalMsg' + str(random.randint(100, 999)),
             'destination': destination,
             'cost': round(random.uniform(0.01, 0.05), 4),
             'ip_address': fake.ipv4(),
@@ -84,7 +84,7 @@ def generate_data(num_records=1000):
             
         data.append({
             'timestamp': timestamp.isoformat(),
-            'sender_id': 'SinchMsg' + str(random.randint(100, 999)),
+            'sender_id': 'CymbalMsg' + str(random.randint(100, 999)),
             'destination': destination,
             'cost': round(random.uniform(0.10, 0.50), 4),
             'ip_address': fraud_ip,
